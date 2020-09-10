@@ -38,6 +38,10 @@ To run the stream server we create a docker container for it
 
     $ docker-compose up -d
 
+It is also possible run it mannualy
+
+    $ go run cmd/server/main.go
+
 To play a random song in a client
 
     $ go run cmd/client/main.go
