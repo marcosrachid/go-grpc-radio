@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package stream;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "pb";
+
+message Data {
+    int32 sequence = 1;
+    string filename = 2;
+    int64 rate = 3;
+    int64 channels = 4;
+    bytes data = 5;
+}
+
+service Streamer {
+    rpc Audio(google.protobuf.Empty) returns (stream Data);
+}

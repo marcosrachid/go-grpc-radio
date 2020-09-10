@@ -2,42 +2,81 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"io"
+	"log"
+	"os"
+	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/gordonklaus/portaudio"
+	"github.com/marcosrachid/go-grpc-radio/internal/pb"
 	"github.com/marcosrachid/go-grpc-radio/pkg/utils"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 const sampleRate = 44100
 const seconds = 2
 
 func main() {
-	portaudio.Initialize()
-	defer portaudio.Terminate()
-	buffer := make([]float32, sampleRate*seconds)
-
-	stream, err := portaudio.OpenDefaultStream(0, 1, sampleRate, len(buffer), func(out []float32) {
-		resp, err := http.Get("http://localhost:8080/audio")
-		utils.Chk(err)
-		body, _ := ioutil.ReadAll(resp.Body)
-		responseReader := bytes.NewReader(body)
-		binary.Read(responseReader, binary.BigEndian, &buffer)
-		for i := range out {
-			out[i] = buffer[i]
-		}
-	})
-	utils.Chk(err)
-	utils.Chk(stream.Start())
-	time.Sleep(time.Second * 40)
-	utils.Chk(stream.Stop())
-	defer stream.Close()
-
+	wd, _ := os.Getwd()
+	certFile := filepath.Join(wd, "ssl", "cert.pem")
+	creds, err := credentials.NewClientTLSFromFile(certFile, "")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("Error creating credentials: %s\n", err)
 	}
 
+	serverAddr := fmt.Sprintf(
+		"%s:%s",
+		utils.GetenvDefault("ADDR", pb.ADDR),
+		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
+	)
+	conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(creds))
+
+	if err != nil {
+		log.Fatalf("Fail to dial: %s\n", err)
+	}
+
+	defer conn.Close()
+	client := pb.NewStreamerClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stream, err := client.Audio(ctx, &emptypb.Empty{})
+
+	portaudio.Initialize()
+	defer portaudio.Terminate()
+	out := make([]int16, 8192)
+	var portAudioStream *portaudio.Stream
+
+	for {
+		time.Sleep(50 * time.Millisecond)
+		utils.CallClear()
+		res, err := stream.Recv()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			log.Fatal("cannot receive response: ", err)
+		}
+		log.Printf("Now Playing: %d - %s", res.GetSequence(), res.GetFilename())
+
+		if portAudioStream == nil {
+			portAudioStream, err = portaudio.OpenDefaultStream(0, int(res.GetChannels()), float64(res.GetRate()), len(out), &out)
+			utils.Chk(err)
+			defer portAudioStream.Close()
+
+			utils.Chk(portAudioStream.Start())
+			defer portAudioStream.Stop()
+		}
+
+		utils.Chk(binary.Read(bytes.NewBuffer(res.GetData()), binary.LittleEndian, out))
+		utils.Chk(portAudioStream.Write())
+	}
 }
