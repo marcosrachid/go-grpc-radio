@@ -64,6 +64,8 @@ func main() {
 		}
 		log.Printf("Now Playing: %d - %s", res.GetSequence(), res.GetFilename())
 
+		// fmt.Println("audio data: ", res.GetData())
+
 		if portAudioStream == nil {
 			portAudioStream, err = portaudio.OpenDefaultStream(0, int(res.GetChannels()), float64(res.GetRate()), len(out), &out)
 			utils.Chk(err)

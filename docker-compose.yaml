@@ -14,35 +14,9 @@ services:
       - '4000:4000'
     expose:
       - '4000'
+    devices:
+      - /dev/snd:/dev/snd
     volumes:
-    - ./ssl:/root/ssl
+      - ./ssl:/root/ssl
     networks:
       - basic
-
-#   client1:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile.client
-#     restart: unless-stopped
-#     environment:
-#       - ADDR=server
-#     depends_on:
-#       - server
-#     volumes:
-#       - ./ssl/cert.pem:/root/ssl/cert.pem
-#     networks:
-#       - basic
-
-#   client2:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile.client
-#     restart: unless-stopped
-#     environment:
-#       - ADDR=server
-#     depends_on:
-#       - server
-#     volumes:
-#       - ./ssl/cert.pem:/root/ssl/cert.pem
-#     networks:
-#       - basic
