@@ -1,0 +1,48 @@
+version: '3.3'
+
+networks:
+  basic:
+
+services:
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    expose:
+      - '4000'
+    volumes:
+    - ./ssl:/root/ssl
+    networks:
+      - basic
+
+#   client1:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.client
+#     restart: unless-stopped
+#     environment:
+#       - ADDR=server
+#     depends_on:
+#       - server
+#     volumes:
+#       - ./ssl/cert.pem:/root/ssl/cert.pem
+#     networks:
+#       - basic
+
+#   client2:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.client
+#     restart: unless-stopped
+#     environment:
+#       - ADDR=server
+#     depends_on:
+#       - server
+#     volumes:
+#       - ./ssl/cert.pem:/root/ssl/cert.pem
+#     networks:
+#       - basic

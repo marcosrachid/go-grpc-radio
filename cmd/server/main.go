@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/marcosrachid/go-grpc-radio/internal/pb"
-	"github.com/marcosrachid/go-grpc-radio/pkg/utils"
+	"github.com/marcosrachid/go-grpc-stream/internal/pb"
+	"github.com/marcosrachid/go-grpc-stream/pkg/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )

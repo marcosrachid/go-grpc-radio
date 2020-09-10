@@ -8,7 +8,7 @@ import (
 
 	"github.com/bobertlo/go-mpg123/mpg123"
 	"github.com/gordonklaus/portaudio"
-	"github.com/marcosrachid/go-grpc-radio/pkg/utils"
+	"github.com/marcosrachid/go-grpc-stream/pkg/utils"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -30,7 +30,7 @@ func (s *StreamServer) Audio(empty *emptypb.Empty, a Streamer_AudioServer) error
 
 	rand.Seed(time.Now().UnixNano())
 	randomIndex := rand.Intn(len(files))
-	fmt.Println("random: ", randomIndex)
+	fmt.Println("Sequence: ", randomIndex+1)
 	file := files[randomIndex]
 
 	fmt.Println("Playing: ", file.Name())

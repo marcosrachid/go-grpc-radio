@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/gordonklaus/portaudio"
-	"github.com/marcosrachid/go-grpc-radio/internal/pb"
-	"github.com/marcosrachid/go-grpc-radio/pkg/utils"
+	"github.com/marcosrachid/go-grpc-stream/internal/pb"
+	"github.com/marcosrachid/go-grpc-stream/pkg/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -45,10 +45,7 @@ func main() {
 	defer conn.Close()
 	client := pb.NewStreamerClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	stream, err := client.Audio(ctx, &emptypb.Empty{})
+	stream, err := client.Audio(context.Background(), &emptypb.Empty{})
 
 	portaudio.Initialize()
 	defer portaudio.Terminate()
