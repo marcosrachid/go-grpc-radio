@@ -46,6 +46,9 @@ func main() {
 	client := pb.NewStreamerClient(conn)
 
 	stream, err := client.Audio(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		log.Fatal("audio client error: ", err)
+	}
 
 	portaudio.Initialize()
 	defer portaudio.Terminate()

@@ -1,4 +1,4 @@
-FROM golang:1.14.3 as builder
+FROM golang:1.16.4 as builder
 
 RUN apt-get update
 RUN apt-get install portaudio19-dev libmpg123-dev -y
@@ -20,13 +20,15 @@ FROM ubuntu:18.04
 
 ENV ALSA_CARD "Generic"
 
-RUN apt-get update && apt-get install alsa-utils avahi-utils portaudio19-dev libmpg123-dev -y
+RUN apt-get update && apt-get install gcc alsa-utils avahi-utils portaudio19-dev libmpg123-dev -y
+
 RUN usermod -a -G audio root
 
 WORKDIR /root/
 
 COPY --from=builder /go/src/go-grpc-stream/server .
 COPY ./audios ./audios
+COPY ./ssl ./ssl
 
 RUN chmod +x ./server
 

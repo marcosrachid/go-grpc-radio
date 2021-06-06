@@ -18,7 +18,7 @@ libprotoc | 3.13.0
 
 Pre-install portaudio and libmpg123 to run
 
-    $ apt-get update && apt-get install alsa-utils avahi-utils portaudio19-dev libmpg123-dev -y
+    $ apt-get update && apt-get install gcc alsa-utils avahi-utils portaudio19-dev libmpg123-dev -y
 
 ## Pre-running
 
