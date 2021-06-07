@@ -30,7 +30,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerService(grpcServer, pb.NewServer())
+	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
 
 	fmt.Printf("Listening gRPC on %s\n", serverAddr)
 	grpcServer.Serve(listen)

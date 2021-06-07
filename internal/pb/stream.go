@@ -19,9 +19,9 @@ const (
 
 type StreamServer struct{}
 
-func NewServer() *StreamerService {
+func NewServer() *StreamServer {
 	server := &StreamServer{}
-	return NewStreamerService(server)
+	return server
 }
 
 func (s *StreamServer) Audio(empty *emptypb.Empty, a Streamer_AudioServer) error {
@@ -75,3 +75,5 @@ func (s *StreamServer) Audio(empty *emptypb.Empty, a Streamer_AudioServer) error
 	}
 	return nil
 }
+
+func (s *StreamServer) mustEmbedUnimplementedStreamerServer() {}

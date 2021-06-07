@@ -20,9 +20,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-const sampleRate = 44100
-const seconds = 2
-
 func main() {
 	wd, _ := os.Getwd()
 	certFile := filepath.Join(wd, "ssl", "cert.pem")
