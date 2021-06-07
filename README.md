@@ -26,9 +26,7 @@ If you're going to start the application manually
 
     $ cd ssl && ./generate-keys.sh
 
-## Regenerate protobuf files
-
-If any changes were made to proto files 
+Generate proto files 
 
     $ cd internal/pb && protoc --go_out=. --go-grpc_out=. stream.proto
 
