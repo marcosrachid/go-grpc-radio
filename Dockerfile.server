@@ -18,7 +18,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o server ./cmd/serv
 ######## Start a new stage from scratch #######
 FROM ubuntu:18.04
 
-ENV ALSA_CARD "Generic"
+ENV ALSA_CARD "PCH"
 
 RUN apt-get update && apt-get install gcc alsa-utils avahi-utils portaudio19-dev libmpg123-dev -y
 
@@ -29,6 +29,7 @@ WORKDIR /root/
 COPY --from=builder /go/src/go-grpc-stream/server .
 COPY ./audios ./audios
 COPY ./ssl ./ssl
+COPY ./alsa.conf /usr/share/alsa/alsa.conf
 
 RUN chmod +x ./server
 
